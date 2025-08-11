@@ -54,9 +54,7 @@ urlpatterns = [
     #path('djoser/', include('djoser.urls.jwt')),
 
     #REDIRECCIONAMIENTO
-    re_path(r'^(?!api/docs/|api/old-turnos/).*$', RedirectView.as_view(url='/admin/', permanent=False)),
+    re_path(r'^(?!admin/).*$', RedirectView.as_view(url='/api/docs/', permanent=False)),
 
 
 ]
-
-urlpatterns += [re_path(r'^.*', TemplateView.as_view(template_name='index.html'))]

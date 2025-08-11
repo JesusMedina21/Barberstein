@@ -27,11 +27,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-kd1%q%ppbdgox_w!(d)0uya4p3rxkt+6q^tcby&qng#m79=^uj'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = False
-#ALLOWED_HOSTS = ['apibarberia.vercel.app']
+DEBUG = False
+ALLOWED_HOSTS = ['apibarberstein.vercel.app']
 
-DEBUG = True
-ALLOWED_HOSTS = []
+#DEBUG = True
+#ALLOWED_HOSTS = []
 
 # Application definition
 
