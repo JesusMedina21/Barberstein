@@ -254,9 +254,9 @@ EMAIL_HOST_PASSWORD = 'npvhqpyrpbnuiigb'
 EMAIL_USE_TLS = True
 
 DEFAULT_FROM_EMAIL = 'jesusmedina0921@gmail.com' 
-DOMAIN = 'localhost:8100'
+DOMAIN = 'barberstein.vercel.app'
 SITE_NAME = 'Barberstein' 
-PROTOCOL = 'http'
+PROTOCOL = 'https'
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
