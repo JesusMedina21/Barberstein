@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load pwa %}
+{% block extra_styles %}
+<link rel="stylesheet" href="{{ swagger_ui_css }}">
+<link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui-themes/3.0.0/themes/3.x/theme-flattop.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+<!-- Añade Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<link rel="stylesheet" href="{% static 'css/swagger-custom.css' %}">
+{% endblock %}
+{% block content %}
+
+<div id="swagger-ui"></div>
+<div class="button-container">
+    <button id="theme-toggle" class="btn btn-secondary">
+        <i class="bi bi-moon-fill"></i> <!-- Icono por defecto (modo claro) -->
+    </button>
+    <a class="btn btn-primary" href="/admin/">Ir a admin</a>
+</div>
+<script src="{{ swagger_ui_bundle }}"></script>
+<script src="{{ swagger_ui_standalone }}"></script>
+{% if script_url %}
+<script src="{{ script_url }}"></script>
+{% else %}
+<script>
+    {% include template_name_js %}
+</script>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('theme-toggle');
+        const body = document.body;
+        const icon = toggleBtn.querySelector('i'); // Selecciona el icono dentro del botón
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            // Cambia a icono de sol cuando está en modo oscuro
+            icon.className = 'bi bi-sun-fill';
+        } else {
+            // Mantiene icono de luna cuando está en modo claro
+            icon.className = 'bi bi-moon-fill';
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                // Cambia a icono de sol
+                icon.className = 'bi bi-sun-fill';
+            } else {
+                localStorage.setItem('theme', 'light');
+                // Cambia a icono de luna
+                icon.className = 'bi bi-moon-fill';
+            }
+        });
+    });
+</script>
+
+{% endblock %}

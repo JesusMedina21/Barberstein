@@ -1,0 +1,290 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_modify jazzmin %}
+{% get_jazzmin_settings request as jazzmin_settings %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'vendor/select2/css/select2.min.css' %}">
+    <style>
+        /* Estilos para emular el look del Django admin tradicional */
+        .django-style-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .django-style-form .form-row {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .django-style-form .fieldBox {
+            margin-bottom: 12px;
+        }
+        
+        .django-style-form label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .django-style-form input[type="text"],
+        .django-style-form input[type="email"],
+        .django-style-form input[type="password"],
+        .django-style-form input[type="number"],
+        .django-style-form input[type="time"],
+        .django-style-form textarea,
+        .django-style-form select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background: white;
+        }
+        
+        .django-style-form input[type="text"]:focus,
+        .django-style-form input[type="email"]:focus,
+        .django-style-form input[type="password"]:focus,
+        .django-style-form input[type="number"]:focus,
+        .django-style-form input[type="time"]:focus,
+        .django-style-form textarea:focus,
+        .django-style-form select:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .django-style-form .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .django-style-form .checkbox-row input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .django-style-form .help {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .django-style-form .errors {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .django-style-form .errors ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        /* Estilos para los títulos de sección al estilo Django */
+        .section-title {
+            background: #79aec8;
+            color: white;
+            padding: 10px 15px;
+            margin: 20px 0 15px 0;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .section-title:first-child {
+            margin-top: 0;
+        }
+        
+        /* Mejorar la apariencia de los checkboxes múltiples */
+        .django-style-form ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .django-style-form ul li {
+            margin-bottom: 5px;
+        }
+        
+        .django-style-form ul li label {
+            font-weight: normal;
+            display: inline;
+            margin-left: 5px;
+        }
+    </style>
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+    {{ media }}
+{% endblock %}
+
+{% block coltype %}colM{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-form{% endblock %}
+
+{% if not is_popup %}
+    {% block breadcrumbs %}
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin:index' %}">{% trans 'Home' %}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a></li>
+            <li class="breadcrumb-item">
+                {% if has_view_permission %}
+                    <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+                {% else %}
+                    {{ opts.verbose_name_plural|capfirst }}
+                {% endif %}
+            </li>
+            <li class="breadcrumb-item active">
+                {% if add %}
+                    {% blocktrans with name=opts.verbose_name %}Add {{ name }}{% endblocktrans %}
+                {% else %}
+                    {{ original|truncatewords:"18" }}
+                {% endif %}
+            </li>
+        </ol>
+    {% endblock %}
+{% endif %}
+
+{% block content_title %} {{ opts.verbose_name_plural|capfirst }} {% endblock %}
+
+{% block content %}
+
+    <div id="content-main" class="col-12">
+        <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>
+            {% csrf_token %}
+            {% block form_top %}{% endblock %}
+
+            {% if errors %}
+                <div class="alert alert-danger">
+                    {% if errors|length == 1 %}
+                        {% trans "Please correct the error below." %}
+                    {% else %}
+                        {% trans "Please correct the errors below." %}
+                    {% endif %}
+                </div>
+                {% for error in adminform.form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <i class="icon fa fa-ban"></i>{{ error|capfirst }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="row">
+                {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1">{% endif %}
+                {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">{% endif %}
+
+                <div class="col-12 col-lg-12">
+                    <div class="card">
+                        <div class="card-body django-style-form">
+                            {# REEMPLAZO DEL INCLUDE CHANGE FORM TEMPLATE #}
+                            {% if adminform.fieldsets %}
+                                {% for fieldset in adminform %}
+                                    {% if fieldset.name %}
+                                        <div class="section-title">
+                                            {{ fieldset.name }}
+                                            {% if fieldset.description %}
+                                                <div class="description">{{ fieldset.description|safe }}</div>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    {% for line in fieldset %}
+                                        <div class="form-row{% if line.errors %} errors{% endif %}{% if not line.has_visible_field %} hidden{% endif %}">
+                                            {% for field in line %}
+                                                <div class="fieldBox{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if not field.is_readonly and field.errors %} errors{% endif %}{% if field.field.is_hidden %} hidden{% endif %}">
+                                                    {% if not field.is_readonly %}{{ field.errors }}{% endif %}
+                                                    {% if field.is_checkbox %}
+                                                        <div class="checkbox-row">
+                                                            {{ field.field }}{{ field.label_tag }}
+                                                        </div>
+                                                    {% else %}
+                                                        {{ field.label_tag }}
+                                                        {% if field.is_readonly %}
+                                                            <div class="readonly">{{ field.contents }}</div>
+                                                        {% else %}
+                                                            {{ field.field }}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                    {% if field.field.help_text %}
+                                                        <div class="help">{{ field.field.help_text|safe }}</div>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                {% for field in adminform %}
+                                    <div class="form-row{% if field.field.name %} field-{{ field.field.name }}{% endif %}">
+                                        {{ field.label_tag }}
+                                        {{ field }}
+                                        {% if field.field.help_text %}
+                                            <div class="help">{{ field.field.help_text|safe }}</div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            {# FIN DEL REEMPLAZO #}
+                        </div>
+                    </div>
+                </div>
+
+                {% block after_field_sets %}{% endblock %}
+
+                {% block inline_field_sets %}{% endblock %}
+
+                {% block after_related_objects %}{% endblock %}
+
+                
+
+                {% block admin_change_form_document_ready %}
+                    <script type="text/javascript" id="django-admin-form-add-constants" src="{% static 'admin/js/change_form.js' %}" {% if adminform and add %}data-model-name="{{ opts.model_name }}"{% endif %}></script>
+                {% endblock %}
+
+                {% prepopulated_fields_js %}
+            </div>
+            <div class="col-12 col-lg-12">
+                    <div id="jazzy-actions" class="{{ jazzmin_ui.actions_classes }}">
+                        {% block submit_buttons_bottom %}
+                            {% submit_row %}
+                            {% block object-tools %}
+                                {% if change %}
+                                    {% if not is_popup %}
+                                        <div class="object-tools">
+                                            {% block object-tools-items %}
+                                                {% change_form_object_tools %}
+                                                {% block extra_actions %}{% endblock %}
+                                            {% endblock %}
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                            {% endblock %}
+                        {% endblock %}
+                    </div>
+                </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block extrajs %}
+    {{  block.super }}
+    <script type="text/javascript" src="{% static 'vendor/select2/js/select2.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jazzmin/js/change_form.js' %}"></script>
+    {% if jazzmin_settings.related_modal_active %}
+    <script type="text/javascript" src="{% static 'jazzmin/plugins/bootstrap-show-modal/bootstrap-show-modal.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jazzmin/js/related-modal.js' %}"></script>
+    {% endif %}
+{% endblock %}

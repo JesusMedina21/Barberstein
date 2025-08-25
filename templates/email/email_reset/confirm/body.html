@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Confirmacion de correo electronico en {{ site_name }}</h2>
+    <p>Hola,</p>
+    
+    <p>Has solicitado cambiar tu dirección de correo electronico en <strong>{{ site_name }}</strong>.</p>
+    
+    <p>Para completar este proceso, por favor haz clic en el siguiente enlace para confirmar tu correo electronico:</p>
+    
+    <a href="{{ protocol }}://{{ domain }}/{{ url }}">Confirmar correo</a>
+    
+    <p>Si no solicitaste este cambio de correo, ignora este mensaje.</p>
+    
+    <p>Saludos,<br>El equipo de {{ site_name }}</p>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notificación de cambio de email</title>
+</head>
+<body>
+    <p>Hola,</p>
+    
+    <p>Te informamos que la dirección de email asociada a tu cuenta en <strong>{{ site_name }}</strong> ha sido cambiada.</p>
+    
+    <table>
+        <tr>
+            <td><strong>Email anterior:</strong></td>
+            <td>{{ old_email }}</td>
+        </tr>
+        <tr>
+            <td><strong>Nuevo email:</strong></td>
+            <td>{{ new_email }}</td>
+        </tr>
+        <tr>
+            <td><strong>Fecha del cambio:</strong></td>
+            <td>{% now "DATETIME_FORMAT" %}</td>
+        </tr>
+    </table>
+    
+    <p>Si no autorizaste este cambio, por favor contacta inmediatamente a nuestro equipo de soporte en <a href="mailto:{{ support_email }}">{{ support_email }}</a></p>
+    
+    <p>Gracias,<br>
+    El equipo de {{ site_name }}</p>
+</body>
+</html>

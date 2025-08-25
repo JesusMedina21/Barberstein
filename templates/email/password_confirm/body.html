@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Notificacion de cambio de contraseña</title>
+</head>
+<body>
+    <h2>¡Su contraseña ha sido cambiada exitosamente!</h2>
+    <p>Hola {{ user.first_name }},</p>
+    <p>Este mensaje confirma que la contraseña de tu cuenta en {{ site_name }} ha sido cambiada correctamente.</p>
+    
+    <p>Si no realizaste este cambio, por favor contacta inmediatamente a nuestro equipo de soporte:</p>
+    <ul>
+        <li>Email: {{ support_email }}</li>
+        <li>Teléfono: {{ contact_phone }}</li>
+    </ul>
+    
+    <p>Gracias por usar {{ app_name }}!</p>
+    
+    <p>El equipo de {{ site_name }}</p>
+</body>
+</html>
