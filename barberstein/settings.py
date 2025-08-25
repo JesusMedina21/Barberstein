@@ -149,7 +149,7 @@ JAZZMIN_SETTINGS = {
 
     # Additional links to include in the user menu on the top right ("app" url type is not allowed)
     "usermenu_links": [
-        {"name": "Docs", "url": "http://localhost:8000/api/docs/", "new_window": False},
+        {"name": "Docs", "url": "https://apibarberstein.vercel.app/api/docs/", "new_window": False},
    
     ],
 
